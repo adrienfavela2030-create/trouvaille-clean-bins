@@ -1,53 +1,39 @@
-# Trouvaille Bins
+# Trouvaille Bins — Supabase integration (scaffold)
 
-Trouvaille Bins is a fully interactive, premium sanitation service platform built for both customers and business management. This repository contains all the code for the platform, designed with modern, professional aesthetics and built with a focus on user experience and functionality.
+You confirmed "Start with first" (scaffold-only). I added the scaffold for Supabase integration to the trouvaille-bins-start branch. Next steps are to run migrations and wire environment secrets.
 
-## Website Features
+Recommended next steps (safe, no secrets in repo):
 
-### 1. Customer Functionality
-#### Secure Registration & Authentication:
-- Create new accounts using Name, Phone Number, Username, and Password.
-- Keep users logged in with session persistence.
+1) Create a Supabase project
+   - https://app.supabase.com/
+   - Note the Project URL and public anon key
 
-#### Booking Services:
-- One-Time Cleaning Service: $15 for the first bin, adjustable in real-time for more bins.
-- Monthly Subscription Plan: $45 per month with recurring services and added benefits.
+2) Run the migration in `supabase/migrations/001_init.sql`
+   - Use the Supabase CLI or psql with your service_role key to apply the migration.
+   - Example with supabase CLI:
+     - Install: https://supabase.com/docs/guides/cli
+     - Login: `supabase login`
+     - Link project: `supabase link --project-ref your-project-ref`
+     - Push migrations: `supabase db push --project-ref your-project-ref`
 
-#### Personal Dashboard:
-- Manage account details, view booking history, track subscriptions, and see upcoming cleaning schedules.
+3) Add RLS policies and create an admin user
+   - Enable RLS and add secure policies for each table (examples in the SQL file comments)
+   - Create an admin profile by signing up a Supabase Auth user and updating `profiles.role` to `admin` using the service_role key or via the Supabase dashboard.
 
-### 2. Founder Hub Admin Panel
-- **Admin Login Credentials:**
-  - Username: Adrien
-  - Password: favela23
+4) Deploy Edge Functions (optional)
+   - Use Supabase Functions to deploy `supabase/functions/*` (or implement equivalent serverless functions).
 
-#### Admin Features:
-- Manage customer accounts, subscriptions, booking requests, and schedules.
-- Live job management system with persistent global timers.
-- A system-wide announcement banner tool for sending live updates.
+5) Configure environment
+   - Add the keys to your Vite/Netlify/Vercel environment or as GitHub repo secrets
+   - Update `.env` locally with values from `.env.example`
 
----
+6) Replace demo localStorage flows in `src/app.js` with the Supabase functions (the scaffold already includes examples).
 
-## Development Stack
-- **Frontend**: HTML, CSS, JavaScript (with animations and premium UI effects)
-- **Backend**: Node.js
-- **Database**: Supabase
-- **Authentication**: Supabase Auth with email and phone capabilities
-- **Email Notifications**: Automated alerts built-in for each booking
+7) Email integration
+   - Provide SendGrid or SMTP credentials to the Edge Function or serverless function that sends booking emails to the owner.
 
-## Project Structure
-To get started, here is the initial project breakdown:
-- **Authentication Pages**: Login, Registration, Owner System
-- **Customer Dashboard**: Service management, Account Settings, and History
-- **Admin Panel (Founder Hub)**: Manage bookings, job timers, customer accounts, and schedules
+If you want, I can now:
+- Push additional client code converting the current index.html demo to use `src/lib/supabaseClient.js` (requires the anon key from you to test locally).
+- Create a GitHub Action that runs migrations using the service_role key stored in repository secrets (I will provide the workflow and you will add the secret).
 
-### Installing and Running Locally
-1. Clone the repository:
-   ```
-   git clone https://github.com/adrienfavela2030-create/trouvaille-clean-bins
-   ```
-2. Install dependencies with npm.
-3. Run `npm start` to launch the development server.
-
-## Coming Soon
-Responsive layouts, dark/light mode toggle, and interactive animations for a seamless user experience. Stay tuned for updates!
+Which of these would you like me to do next?

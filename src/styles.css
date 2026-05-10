@@ -1,0 +1,11 @@
+/* Refined styles for Trouvaille Bins frontend (used by src/index.html) */
+:root{--accent:#0fa678;--gold:#f3c614;--muted:#94a3b8}
+body{font-family:Inter,system-ui,Arial;background:linear-gradient(180deg,#071216,#0f1720);color:#e6eef3;margin:0}
+.container{max-width:1040px;margin:0 auto;padding:16px}
+.header{display:flex;justify-content:space-between;align-items:center;padding:12px}
+.logo{display:flex;align-items:center;gap:12px}
+.logo .mark{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#026440);display:flex;align-items:center;justify-content:center;font-weight:800}
+.card{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));border-radius:12px;padding:16px;margin-top:12px;backdrop-filter:blur(8px)}
+.btn{background:var(--accent);color:#002b20;padding:10px 14px;border-radius:12px;border:none;font-weight:700;cursor:pointer}
+.small{color:var(--muted);font-size:0.9rem}
+@media(max-width:600px){.header{padding:8px}.container{padding:12px}}
