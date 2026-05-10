@@ -1,34 +1,504 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trouvaille Bins</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Trouvaille Bins — Premium Bin Cleaning</title>
+  <meta name="description" content="Premium, fast, mobile-first bin cleaning booking and admin platform." />
+
+  <!-- Lightweight page-level styles to ensure the page looks great independently of styles.css -->
+  <style>
+    :root{
+      --bg:#0f1720; /* dark */
+      --card: rgba(255,255,255,0.06);
+      --glass: rgba(255,255,255,0.06);
+      --accent:#0fa678; /* emerald */
+      --muted: #94a3b8;
+      --gold:#f3c614;
+      --radius:14px;
+      --soft: 20px;
+      color-scheme: dark;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,#071216 0%, #0f1720 100%);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;color:#e6eef3}
+    a{color:inherit}
+
+    /* Container */
+    .site{max-width:1100px;margin:0 auto;padding:18px}
+
+    /* Top nav */
+    .nav{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand .logo{width:46px;height:46px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#026440);display:flex;align-items:center;justify-content:center;font-weight:700;color:#022;box-shadow:0 6px 18px rgba(5,45,34,0.45)}
+    .brand h1{font-size:1rem;margin:0}
+
+    .nav-actions{display:flex;gap:8px;align-items:center}
+    .btn{background:var(--accent);color:#002b20;padding:10px 14px;border-radius:12px;border:none;font-weight:700;cursor:pointer;box-shadow:0 8px 20px rgba(15,166,120,0.12);}
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--gold)}
+
+    /* Layout grid */
+    .grid{display:grid;grid-template-columns:1fr;gap:18px;margin-top:18px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:var(--radius);padding:16px;backdrop-filter: blur(8px);box-shadow: 0 6px 24px rgba(2,6,9,0.6);border:1px solid rgba(255,255,255,0.03)}
+
+    /* Hero */
+    .hero{display:flex;flex-direction:column;gap:12px;padding:22px;border-radius:var(--radius);align-items:flex-start}
+    .hero h2{margin:0;font-size:1.6rem}
+    .hero p{margin:0;color:var(--muted)}
+
+    /* Plans */
+    .plans{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .plan{padding:14px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.03)}
+    .plan h3{margin:0 0 8px 0}
+    .price{font-weight:800;font-size:1.2rem;color:var(--gold)}
+
+    /* Slider */
+    .slider-row{display:flex;align-items:center;gap:12px}
+    input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:6px;background:linear-gradient(90deg,var(--accent),#04a66f);outline:none}
+
+    /* Booking form */
+    form{display:grid;gap:10px}
+    label{font-size:0.85rem;color:var(--muted)}
+    input[type=text], input[type=password], input[type=tel], input[type=datetime-local], textarea, select{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
+
+    .row{display:flex;gap:10px}
+    .row .col{flex:1}
+
+    /* Footer */
+    footer{margin-top:18px;text-align:center;color:var(--muted);font-size:0.85rem}
+
+    /* Mobile-first tweaks */
+    @media(min-width:900px){
+      .grid{grid-template-columns: 2fr 1fr}
+      .hero{align-items:flex-start}
+      .plans{grid-template-columns:1fr}
+    }
+
+    /* User menu */
+    .user-menu{position:relative}
+    .user-btn{display:flex;gap:8px;align-items:center;padding:8px;border-radius:10px;background:rgba(255,255,255,0.02)}
+    .dropdown{position:absolute;right:0;top:56px;background:var(--card);min-width:220px;border-radius:10px;padding:10px;display:none;flex-direction:column;gap:8px;border:1px solid rgba(255,255,255,0.03)}
+    .dropdown.show{display:flex}
+
+    /* Admin panel (hidden by default) */
+    .admin{display:none}
+    .admin.active{display:block}
+    .admin .jobs{display:grid;gap:8px}
+    .job{display:flex;justify-content:space-between;align-items:center;padding:8px;border-radius:8px;background:linear-gradient(180deg, rgba(0,0,0,0.15), rgba(255,255,255,0.02))}
+    .small{font-size:0.85rem;color:var(--muted)}
+
+    /* Modals */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:10000}
+    .modal{width:95%;max-width:420px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.04)}
+
+    /* compact footer */
+    .muted{color:var(--muted);font-size:0.85rem}
+
+  </style>
 </head>
 <body>
-    <header>
-        <nav class="navbar">
-            <div class="logo">Trouvaille Bins</div>
-            <ul class="nav-links">
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Services</a></li>
-                <li><a href="#">Schedule</a></li>
-                <li><a href="#">Login</a></li>
-            </ul>
-        </nav>
+  <div class="site">
+    <header class="nav">
+      <div class="brand">
+        <div class="logo" aria-hidden>TB</div>
+        <div>
+          <h1>Trouvaille Bins</h1>
+          <div class="small muted">Premium Bin Cleaning & Scheduling</div>
+        </div>
+      </div>
+
+      <div class="nav-actions">
+        <button class="btn ghost" id="announceBtn" title="Announcements">Announcements</button>
+        <div class="user-menu">
+          <button class="user-btn" id="userBtn">Sign in</button>
+          <div class="dropdown" id="userDropdown">
+            <div id="userInfo" style="display:none">
+              <div class="small">Signed in as <strong id="uiName"></strong></div>
+              <button class="btn" id="openDashboard">Open Dashboard</button>
+              <button class="btn ghost" id="logoutBtn">Logout</button>
+            </div>
+            <div id="authActions">
+              <button class="btn" id="openLogin">Login</button>
+              <button class="btn ghost" id="openRegister">Register</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </header>
 
-    <section class="hero">
-        <h1>Premium Bin Cleaning Services</h1>
-        <p>Your partner in sanitation, cleanliness, and convenience.</p>
-        <button class="cta-button">Get Started</button>
-    </section>
+    <main class="grid">
+      <section class="card hero">
+        <div>
+          <h2>Fast. Premium. Hassle-free.</h2>
+          <p>Book one-time cleans or subscribe monthly. Mobile-first design with smooth animations and a premium feel.</p>
+        </div>
+
+        <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn" id="ctaBook">Book Now</button>
+          <button class="btn ghost" id="ctaSubscribe">Subscribe $45/mo</button>
+        </div>
+
+        <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
+          <div class="small muted">Dark mode</div>
+          <label style="display:inline-flex;align-items:center;gap:8px">
+            <input id="toggleDark" type="checkbox" aria-label="Toggle dark" />
+          </label>
+        </div>
+      </section>
+
+      <aside class="card" aria-labelledby="plansTitle">
+        <h3 id="plansTitle">Choose a Plan</h3>
+
+        <div class="plans">
+          <div class="plan" id="oneTime">
+            <h3>One-Time Cleaning</h3>
+            <div class="small muted">$15 for the first bin — additional bins auto-update</div>
+            <div style="margin-top:12px" class="slider-row">
+              <div style="min-width:42px;font-weight:700">Bins</div>
+              <input id="binRange" type="range" min="1" max="12" value="1" />
+              <div style="min-width:72px;text-align:right" class="price" id="oneTimePrice">$15</div>
+            </div>
+          </div>
+
+          <div class="plan" id="monthlyPlan">
+            <h3>Monthly Subscription</h3>
+            <div class="small muted">$45 / month — recurring cleanings, priority scheduling, odor treatment</div>
+            <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center">
+              <div style="font-weight:800;color:var(--gold)">$45<span class="small muted">/mo</span></div>
+              <button class="btn" id="chooseSub">Choose</button>
+            </div>
+          </div>
+        </div>
+
+        <hr style="border:none;border-top:1px solid rgba(255,255,255,0.03);margin:12px 0" />
+
+        <div>
+          <form id="bookingForm">
+            <label>Full name <input type="text" id="fullName" required placeholder="Jane Doe" /></label>
+            <label>Phone <input type="tel" id="phone" required placeholder="(555) 555-5555" /></label>
+            <label>Username <input type="text" id="username" required placeholder="janedoe" /></label>
+            <label>Service type
+              <select id="serviceType">
+                <option value="one-time">One-Time Cleaning</option>
+                <option value="monthly">Monthly Subscription</option>
+              </select>
+            </label>
+            <label>Address <textarea id="address" rows="2" placeholder="123 Green St, Unit 4"></textarea></label>
+
+            <div class="row">
+              <div class="col">
+                <label>Preferred date <input type="datetime-local" id="preferredDate" /></label>
+              </div>
+              <div class="col">
+                <label style="visibility:hidden">placeholder<input type="text" disabled /></label>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button class="btn" type="submit">Request Booking</button>
+              <button class="btn ghost" type="button" id="clearForm">Clear</button>
+            </div>
+
+            <div id="bookingMsg" class="small muted" style="margin-top:8px"></div>
+          </form>
+        </div>
+      </aside>
+
+      <!-- Admin card (hidden unless owner login) -->
+      <section class="card admin" id="adminPanel">
+        <h3>Founder Hub — Admin</h3>
+        <div class="small muted">Owner controls: customer registry, live jobs, announcements.</div>
+
+        <div style="margin-top:12px;display:flex;gap:8px">
+          <button class="btn" id="openRegistry">Customers</button>
+          <button class="btn" id="openJobs">Jobs</button>
+          <button class="btn ghost" id="openAnnouncements">Send Announcement</button>
+        </div>
+
+        <div id="adminContent" style="margin-top:12px"></div>
+      </section>
+
+      <!-- Placeholder area for user dashboard view -->
+      <section class="card" id="userDashboard" style="display:none">
+        <h3>Your Dashboard</h3>
+        <div id="userDetails" class="small muted">No bookings yet.</div>
+      </section>
+
+    </main>
 
     <footer>
-        <p>&copy; 2026 Trouvaille Bins. All rights reserved.</p>
+      <div class="muted">© 2026 Trouvaille Bins — Built mobile-first with glass UI and premium interactions.</div>
     </footer>
+  </div>
 
-    <script src="app.js"></script>
+  <!-- Lightweight interactive JS for demo behaviors. In production this will be replaced by Supabase-backed logic. -->
+  <script>
+    // Elements
+    const userBtn = document.getElementById('userBtn');
+    const userDropdown = document.getElementById('userDropdown');
+    const openLogin = document.getElementById('openLogin');
+    const openRegister = document.getElementById('openRegister');
+    const userInfo = document.getElementById('userInfo');
+    const authActions = document.getElementById('authActions');
+    const uiName = document.getElementById('uiName');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const bookingForm = document.getElementById('bookingForm');
+    const binRange = document.getElementById('binRange');
+    const oneTimePrice = document.getElementById('oneTimePrice');
+    const adminPanel = document.getElementById('adminPanel');
+    const openDashboard = document.getElementById('openDashboard');
+    const userDashboard = document.getElementById('userDashboard');
+    const bookingMsg = document.getElementById('bookingMsg');
+    const announceBtn = document.getElementById('announceBtn');
+
+    // Pricing logic
+    function calcOneTimePrice(bins){
+      const base = 15;
+      if(bins<=1) return base;
+      // each additional $12 after first
+      return base + (bins-1)*12;
+    }
+    function updatePrice(){
+      const bins = parseInt(binRange.value,10)||1;
+      const p = calcOneTimePrice(bins);
+      oneTimePrice.textContent = `$${p}`;
+    }
+    binRange.addEventListener('input', updatePrice);
+    updatePrice();
+
+    // Dropdown toggle
+    userBtn.addEventListener('click', (e)=>{
+      userDropdown.classList.toggle('show');
+    });
+
+    // Basic client-side login/register modals (demo only)
+    openLogin.addEventListener('click', ()=>{
+      userDropdown.classList.remove('show');
+      showAuthModal('login');
+    });
+    openRegister.addEventListener('click', ()=>{
+      userDropdown.classList.remove('show');
+      showAuthModal('register');
+    });
+
+    // Simple modal builder
+    function showAuthModal(mode){
+      const backdrop = document.createElement('div');
+      backdrop.className='modal-backdrop';
+      backdrop.innerHTML = `
+        <div class="modal" role="dialog">
+          <h3>${mode==='login'?'Login':'Create Account'}</h3>
+          <form id="modalForm">
+            <label>${mode==='register'?'Full name':''}<input type="text" id="mName" placeholder="Full Name" ${mode==='register'?'required':''} /></label>
+            <label>Username<input type="text" id="mUser" placeholder="username" required /></label>
+            <label>${mode==='register'?'Phone':''}<input type="tel" id="mPhone" placeholder="(555) 555-5555" ${mode==='register'?'required':''} /></label>
+            <label>Password<input type="password" id="mPass" placeholder="password" required /></label>
+            <div style="display:flex;gap:8px;margin-top:12px">
+              <button class="btn" type="submit">${mode==='login'?'Login':'Create'}</button>
+              <button class="btn ghost" type="button" id="cancelModal">Cancel</button>
+            </div>
+            <div class="small muted" style="margin-top:8px">Note: This demo stores sessions locally. Replace with Supabase wiring for production.</div>
+          </form>
+        </div>
+      `;
+      document.body.appendChild(backdrop);
+      backdrop.querySelector('#cancelModal').addEventListener('click', ()=>backdrop.remove());
+
+      backdrop.querySelector('#modalForm').addEventListener('submit',(ev)=>{
+        ev.preventDefault();
+        const username = backdrop.querySelector('#mUser').value.trim();
+        const pass = backdrop.querySelector('#mPass').value;
+
+        // Owner hidden credentials check
+        if(username === 'Adrien' && pass === 'favela23'){
+          // unlock admin
+          localStorage.setItem('tb_admin','1');
+          activateAdmin();
+          backdrop.remove();
+          return;
+        }
+
+        // Save a simple local session (demo). In production, call Supabase Auth.
+        const session = {username, name: backdrop.querySelector('#mName')?backdrop.querySelector('#mName').value.trim():username};
+        localStorage.setItem('tb_user', JSON.stringify(session));
+        setSignedIn(session);
+        backdrop.remove();
+      });
+    }
+
+    function setSignedIn(session){
+      uiName.textContent = session.name || session.username;
+      userInfo.style.display = 'block';
+      authActions.style.display = 'none';
+      userBtn.textContent = session.name || session.username;
+      userDropdown.classList.remove('show');
+      // show dashboard
+      userDashboard.style.display = 'block';
+      userDetails.textContent = `Hello ${session.name || session.username}. No bookings yet.`;
+    }
+
+    function signOut(){
+      localStorage.removeItem('tb_user');
+      userInfo.style.display = 'none';
+      authActions.style.display = 'block';
+      userBtn.textContent = 'Sign in';
+      userDashboard.style.display = 'none';
+    }
+
+    logoutBtn.addEventListener('click', ()=>{signOut()});
+
+    // Load session on page load
+    const saved = localStorage.getItem('tb_user');
+    if(saved){
+      try{setSignedIn(JSON.parse(saved))}catch(e){localStorage.removeItem('tb_user')}
+    }
+
+    // Admin activation
+    function activateAdmin(){
+      adminPanel.classList.add('active');
+      adminPanel.style.display = 'block';
+      localStorage.setItem('tb_admin','1');
+      // simple registry demo
+      renderAdminRegistry();
+    }
+    if(localStorage.getItem('tb_admin')) activateAdmin();
+
+    // Booking form submit (demo: saves to localStorage and notifies admin)
+    bookingForm.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const data = {
+        name: document.getElementById('fullName').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        username: document.getElementById('username').value.trim(),
+        address: document.getElementById('address').value.trim(),
+        service: document.getElementById('serviceType').value,
+        bins: parseInt(binRange.value,10),
+        price: (document.getElementById('serviceType').value==='monthly')?45:calcOneTimePrice(parseInt(binRange.value,10)),
+        requestedAt: document.getElementById('preferredDate').value || new Date().toISOString()
+      };
+
+      // save booking list locally for demo. Replace with Supabase insert later.
+      const bookings = JSON.parse(localStorage.getItem('tb_bookings')||'[]');
+      bookings.unshift(data);
+      localStorage.setItem('tb_bookings', JSON.stringify(bookings));
+
+      bookingMsg.textContent = 'Booking requested — saved and visible to admin in Founder Hub (demo).';
+      bookingForm.reset();
+      updatePrice();
+
+      // If admin active, re-render jobs
+      if(localStorage.getItem('tb_admin')) renderJobs();
+    });
+
+    // Admin registry and jobs demo
+    function renderAdminRegistry(){
+      const adminContent = document.getElementById('adminContent');
+      adminContent.innerHTML = `<div style="margin-top:8px" class="small muted">Customer registry (demo)</div>`;
+      const customers = JSON.parse(localStorage.getItem('tb_customers')||'[]');
+      const list = document.createElement('div');
+      list.style.marginTop='8px';
+      customers.forEach(c=>{
+        const el = document.createElement('div');
+        el.className='job';
+        el.innerHTML = `<div><strong>${c.name}</strong><div class='small muted'>${c.username} • ${c.phone}</div></div><div class='small muted'>${c.plan||'—'}</div>`;
+        list.appendChild(el);
+      });
+      const addBtn = document.createElement('button');
+      addBtn.className='btn';
+      addBtn.textContent='Add customer (demo)';
+      addBtn.addEventListener('click', ()=>{
+        const sample = {name:'Demo User',username:'demouser',phone:'(555)555-5555',plan:'one-time'};
+        customers.unshift(sample);
+        localStorage.setItem('tb_customers', JSON.stringify(customers));
+        renderAdminRegistry();
+      });
+      adminContent.appendChild(list);
+      adminContent.appendChild(addBtn);
+    }
+
+    function renderJobs(){
+      const adminContent = document.getElementById('adminContent');
+      adminContent.innerHTML = `<div style="margin-top:8px" class="small muted">Live bookings (demo)</div>`;
+      const jobsWrap = document.createElement('div');
+      jobsWrap.className='jobs';
+      const bookings = JSON.parse(localStorage.getItem('tb_bookings')||'[]');
+      bookings.forEach((b,idx)=>{
+        const job = document.createElement('div');
+        job.className='job';
+        job.innerHTML = `<div><strong>${b.name}</strong><div class='small muted'>${b.address} • ${b.phone}</div></div>
+          <div style='text-align:right'><div class='small muted'>${b.service}</div><div style='font-weight:800'>$${b.price}</div>
+          <div style='margin-top:6px'><button class='btn' data-idx='${idx}' data-action='start'>Start Cleaning</button></div></div>`;
+        jobsWrap.appendChild(job);
+      });
+      adminContent.appendChild(jobsWrap);
+
+      // attach start cleaning handlers
+      adminContent.querySelectorAll('button[data-action="start"]').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const idx = btn.getAttribute('data-idx');
+          startJobTimer(idx);
+        });
+      });
+    }
+
+    // persistent job timers demo (localStorage)
+    function startJobTimer(idx){
+      const timers = JSON.parse(localStorage.getItem('tb_timers')||'{}');
+      if(timers[idx]){
+        alert('Timer already running for this job (demo).');
+        return;
+      }
+      timers[idx] = {startedAt: Date.now()};
+      localStorage.setItem('tb_timers', JSON.stringify(timers));
+      alert('Started cleaning timer (demo). Timer persists in browser storage).');
+      renderJobs();
+    }
+
+    // Admin buttons
+    document.getElementById('openRegistry').addEventListener('click', renderAdminRegistry);
+    document.getElementById('openJobs').addEventListener('click', renderJobs);
+    document.getElementById('openAnnouncements').addEventListener('click', ()=>{
+      const msg = prompt('Enter announcement message (demo)');
+      if(msg){
+        localStorage.setItem('tb_announcement', msg);
+        alert('Announcement saved (demo). Press Announcements to view.');
+      }
+    });
+    announceBtn.addEventListener('click', ()=>{
+      const a = localStorage.getItem('tb_announcement');
+      if(a) alert('Announcement:\n\n'+a);
+      else alert('No active announcements (demo).');
+    });
+
+    // clear form
+    document.getElementById('clearForm').addEventListener('click', ()=>{bookingForm.reset();updatePrice();});
+
+    // cta handlers
+    document.getElementById('ctaBook').addEventListener('click', ()=>{window.scrollTo({top:200,behavior:'smooth'})});
+    document.getElementById('ctaSubscribe').addEventListener('click', ()=>{document.getElementById('serviceType').value='monthly';alert('Subscription selected — proceed to register/login to complete (demo)')});
+
+    // admin panel visibility when owner credentials used
+    // open dashboard
+    openDashboard.addEventListener('click', ()=>{userDropdown.classList.remove('show');userDashboard.style.display='block'});
+
+    // Dark toggle (demo)
+    const toggleDark = document.getElementById('toggleDark');
+    toggleDark.addEventListener('change', ()=>{
+      if(toggleDark.checked){
+        document.documentElement.style.setProperty('--bg','#f7f9fb');
+        document.documentElement.style.setProperty('--card','rgba(10,10,10,0.03)');
+        document.documentElement.style.setProperty('--accent','#0fa678');
+        // not fully switching theme in this demo to keep contrast
+      } else {
+        // restore default (no-op for demo)
+      }
+    });
+
+    // close dropdown when clicking outside
+    document.addEventListener('click', (e)=>{
+      if(!userBtn.contains(e.target) && !userDropdown.contains(e.target)) userDropdown.classList.remove('show');
+    });
+
+  </script>
 </body>
 </html>
