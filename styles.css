@@ -8,9 +8,8 @@
 body {
     font-family: 'Arial', sans-serif;
     line-height: 1.6;
-    background: #f4f4f9;
+    background: linear-gradient(to bottom, #f8fbfa, #d4e8ed);
     color: #333;
-    margin: 0;
 }
 
 /* Navigation */
@@ -18,25 +17,30 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #036e53;
-    color: #fff;
+    background: rgba(255, 255, 255, 0.9);
+    color: #036e53;
     padding: 1rem 2rem;
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
 .nav-links {
     list-style: none;
     display: flex;
-    gap: 1.5rem;
+    gap: 1rem;
 }
 
 .nav-links a {
     text-decoration: none;
-    color: #fff;
+    color: #036e53;
+    font-weight: bold;
     transition: color 0.3s ease;
 }
 
 .nav-links a:hover {
-    color: #f3c614;
+    color: #048155;
 }
 
 /* Hero Section */
@@ -45,31 +49,35 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    text-align: center;
-    height: 70vh;
+    height: 80vh;
     background: linear-gradient(to right, #026440, #048155);
     color: #fff;
+    padding: 2rem;
+    text-align: center;
 }
 
 .hero h1 {
-    font-size: 3rem;
+    font-size: 2.5rem;
+    line-height: 1.2;
     margin-bottom: 1rem;
 }
 
 .hero p {
-    font-size: 1.2rem;
+    font-size: 1rem;
     margin-bottom: 2rem;
 }
 
 .cta-button {
-    padding: 0.75rem 1.5rem;
+    padding: 0.75rem 2rem;
     background: #f3c614;
     color: #333;
     border: none;
-    border-radius: 5px;
+    border-radius: 30px;
     font-size: 1rem;
     cursor: pointer;
+    font-weight: bold;
     transition: background 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .cta-button:hover {
@@ -82,4 +90,26 @@ footer {
     background: #036e53;
     color: #fff;
     padding: 1rem 0;
+    font-size: 0.85rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 2rem;
+    }
+
+    .hero p {
+        font-size: 0.9rem;
+    }
+
+    .cta-button {
+        font-size: 0.9rem;
+        padding: 0.5rem 1.5rem;
+    }
+
+    .nav-links {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
 }
